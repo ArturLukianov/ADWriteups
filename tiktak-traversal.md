@@ -22,5 +22,6 @@ for id_ in ids:
     print(requests.get(base_url + "/vtt/?id=0/../" + id_).text)
 ```
 
-Для исправления достаточно проверять, что результат не пуст:
+Один из вариантов исправления - проверять, что id это число:
+![](https://github.com/ArturLukianov/ADWriteups/blob/master/images/tiktak-traversal/Screenshot%20from%202020-05-09%2013-13-06.png)
 
