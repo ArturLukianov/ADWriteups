@@ -86,3 +86,5 @@ print(requests.get(url, params={'score': payload}).text)
 Для патчинга достаточно починить регулярное выражение:
 
 ![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2019-42-20.png)
+
+`^[1-5]$`
