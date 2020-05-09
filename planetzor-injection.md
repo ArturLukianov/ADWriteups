@@ -5,24 +5,24 @@
 
 Одна из самых частых ошибок - инъекции в запросы к базе данных. Посмотрим какие базы данных используются здесь:
 
-![](https://raw.githubusercontent.com/ArturLukianov/StayHomeWriteup/master/images/Screenshot%20from%202020-05-05%2018-50-33.png)
+![](https://raw.githubusercontent.com/ArturLukianov/StayHomeWriteup/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-50-33.png)
 
 Используется redis и redisgraph. Поищем, не используется ли где сырой запрос в базу данных:
 
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-09-31.png)
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-07-36.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-09-31.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-07-36.png)
 
 Поищем, где используется функция graphQuery():
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-08-03.png)
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-08-14.png)
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-08-27.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-08-03.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-08-14.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-08-27.png)
 graphQuery() экранирует двойные кавычки, поэтому отбросим то, где ввод находится между кавычек. Ещё отбросим то, где ввод вообще не используется. Тогда останется только одна функция с сырым запросом, который мы можем эксплуатировать:
 
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-09-31.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-09-31.png)
 
 Посмотрим как мы можем проэксплуатировать запрос:
 
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-32-59.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-32-59.png)
 
 Параметр "planet" экранируется - это нам не подходит
 
@@ -48,14 +48,14 @@ MATCH (r:Review {private: FALSE, planet: "%s"}) WHERE r.score = 1 RETURN r LIMIT
 ## Поиск точки эксплуатации
 
 Мы нашли, что эксплуатировать и как. Осталось найти url и в каком виде передавать параметры:
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-12-37.png)
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2018-30-40.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-12-37.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2018-30-40.png)
 
 Параметры передаются в GET запросе и не требуют аутентификации
 
 Тут можно заметить, что параметр score проверятся score с помощью ValidateScore, который мешает эксплуатации
 
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2019-42-20.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2019-42-20.png)
 
 ## Обход ValidateScore
 
@@ -85,6 +85,6 @@ print(requests.get(url, params={'score': payload}).text)
 
 Для патчинга достаточно починить регулярное выражение:
 
-![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/Screenshot%20from%202020-05-05%2019-42-20.png)
+![](https://github.com/ArturLukianov/StayHomeWriteup/blob/master/images/planetzor-injection/Screenshot%20from%202020-05-05%2019-42-20.png)
 
 `^[1-5]$`
