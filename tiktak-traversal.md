@@ -4,7 +4,7 @@
 
 sploit для destructive farm
 
-```
+```python
 import requests
 import sys
 import re
